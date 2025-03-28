@@ -1,0 +1,946 @@
+{
+  "name": "TG Voice to Txt RU",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        -240
+      ],
+      "id": "785c26ff-8116-44c6-8a30-e6391c7c7c33",
+      "name": "Telegram Trigger",
+      "webhookId": "15076593-37ba-477f-ac8b-a673f38372d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a15861b-3f12-45b4-9184-00e465c046ff",
+              "name": "message",
+              "value": "={{ $('Telegram Trigger').item.json.message }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -320
+      ],
+      "id": "c6ba8f2f-75a4-428c-bd68-ef7e241c81f6",
+      "name": "Get msg"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f7b43ef5-89ca-47c1-865a-2004abfa7038",
+              "leftValue": "={{ $('Extract prefs').item.json.prefs.telegram_valid_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "37f2dff7-2fdc-43b0-b8ab-59c71d92d199",
+              "leftValue": "={{ $('Extract prefs').item.json.prefs.telegram_valid_id }}",
+              "rightValue": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        820,
+        -220
+      ],
+      "id": "536f33b1-5971-41e2-bf63-d7fe1c7106e2",
+      "name": "Valid IDs"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4061d304-7f9a-4091-bcb9-85d2757ea48f",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        -300
+      ],
+      "id": "4906f012-fe45-454b-b5a6-79374f18f17c",
+      "name": "Msg not empty"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        3460,
+        -420
+      ],
+      "id": "0b04a996-ea9d-44e0-b4c7-5004abbf5873",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4334eefd-232d-4eeb-a92b-417ee9a32372",
+              "leftValue": "={{ $json.message.voice }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1480,
+        -320
+      ],
+      "id": "8168e80b-9df1-4ce4-848f-cc15cfd9927b",
+      "name": "Voice exist"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d62a9dc9-f338-4044-9f61-c42807737797",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1700,
+        -200
+      ],
+      "id": "8c9ec392-cf8c-4039-ae48-c62bbd85e725",
+      "name": "Txt exist"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "...",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        -120
+      ],
+      "id": "a620cf6a-b148-4a46-8816-087ab3f43c90",
+      "name": "Msg 3p 1",
+      "webhookId": "30a6c02f-7a46-423d-890b-2a7aff2a1ade",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "...",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1700,
+        -420
+      ],
+      "id": "b05c1a3d-cf51-4075-a9e5-c572247af4e1",
+      "name": "Msg 3p 2",
+      "webhookId": "30a6c02f-7a46-423d-890b-2a7aff2a1ade",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "messageId": "={{ $json.result.message_id }}",
+        "text": "={{ $('Extract prefs').item.json.prefs.no_acc_msg }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        -120
+      ],
+      "id": "562efd6e-d0fe-4e00-8cb7-0eb921b4f594",
+      "name": "Goto Adm",
+      "webhookId": "075046d6-54ee-4b5f-a8b5-9e52e1c69ae7",
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "messageId": "={{ $json.result.message_id }}",
+        "text": "={{ $('Extract prefs').item.json.prefs.waiting_msg }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        -420
+      ],
+      "id": "5a69fbf6-b6d0-4f57-b6e0-b99c18f59f96",
+      "name": "One sec",
+      "webhookId": "30a6c02f-7a46-423d-890b-2a7aff2a1ade",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "...",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        -220
+      ],
+      "id": "8c8b3b3e-6330-44c7-9e12-2622ce04ea27",
+      "name": "Msg 3p 3",
+      "webhookId": "30a6c02f-7a46-423d-890b-2a7aff2a1ade",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $('Extract prefs').item.json.prefs.tg_bot_token }}/getFile ",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "file_id",
+              "value": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2140,
+        -420
+      ],
+      "id": "5ea6578e-e8dc-45ab-bdd7-bdd769df9ddd",
+      "name": "Get URL"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ $('Extract prefs').item.json.prefs.tg_bot_token }}/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2360,
+        -420
+      ],
+      "id": "1dc2eca5-dde5-4294-986d-b6f305152b0e",
+      "name": "Load audio file"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $('Extract prefs').item.json.prefs.tmp_folder }}voice_{{ $('Telegram Trigger').item.json.message.chat.id }}.oga",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2580,
+        -420
+      ],
+      "id": "46b59e07-e167-464b-8c88-df5e99a3f0b5",
+      "name": "Write audio to Disk"
+    },
+    {
+      "parameters": {
+        "command": "={{ $('Extract prefs').item.json.prefs.ffmpeg_path }} -y -i {{ $('Extract prefs').item.json.prefs.tmp_folder }}voice_{{ $('Telegram Trigger').item.json.message.chat.id }}.oga -acodec pcm_s16le -ar 16000 -ac 1 {{ $('Extract prefs').item.json.prefs.tmp_folder }}voice_{{ $('Telegram Trigger').item.json.message.chat.id }}.wav"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        -420
+      ],
+      "id": "48dcb3de-dc9d-4ed5-9016-6852b8a18d02",
+      "name": "ffmpeg"
+    },
+    {
+      "parameters": {
+        "command": "=python {{ $env.WF_TGVOICETOTXT_PATH }}voicetotxt.py {{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        3020,
+        -420
+      ],
+      "id": "5a9319ab-7078-4c1e-9509-73152900703e",
+      "name": "voicetotxt by vosk"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('Extract prefs').item.json.prefs.tmp_folder }}voice_{{ $('Telegram Trigger').item.json.message.chat.id }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        3240,
+        -420
+      ],
+      "id": "b54e4c9b-2b6b-48a1-b739-24e7e51b2906",
+      "name": "Read txt from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "messageId": "={{ $('One sec').item.json.result.message_id }}",
+        "text": "={{ $json.data }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3680,
+        -420
+      ],
+      "id": "79fe6a25-0221-446b-881f-edb4616db894",
+      "name": "Msg Txt",
+      "webhookId": "fb1a18b2-f673-469d-9b97-8d875912ceec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "messageId": "={{ $json.result.message_id }}",
+        "text": "={{ $('Extract prefs').item.json.prefs.bot_help_msg }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2140,
+        -220
+      ],
+      "id": "ac40dfff-e1d1-4a3f-81e9-869123e6fcff",
+      "name": "Msg Bot Help",
+      "webhookId": "eac18645-d39d-4c76-9687-f5ef0d822e63",
+      "credentials": {
+        "telegramApi": {
+          "id": "FqehTw4KNiaxgvPE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5610d2d4-a976-4e64-981e-22b115dfef7a",
+              "name": "wf_path",
+              "value": "={{ $env.WF_TGVOICETOTXT_PATH }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -660
+      ],
+      "id": "54545b84-a319-43c4-9320-d6a96eced094",
+      "name": "Get prefs path"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.wf_path }}wf_tgvoicetotxt_prefs.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -660
+      ],
+      "id": "ee94f8f1-aeca-45e8-80fe-62817778a209",
+      "name": "Read prefs from file",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "destinationKey": "prefs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -660
+      ],
+      "id": "401dee4f-f6c1-43e6-baae-c581c38ec793",
+      "name": "Extract prefs"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        600,
+        -220
+      ],
+      "id": "7aa50d4c-9cf3-4629-8f98-fa7eac1f7da7",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e72a0b0e-f5af-4373-9398-902d6177fe8c",
+              "name": "cmd_ffmpeg",
+              "value": "= {{ $json.prefs.ffmpeg_path }} -y -i {{ $json.prefs.tmp_folder }}voice.oga -acodec pcm_s16le -ar 16000 -ac 1 {{ $json.prefs.tmp_folder }}voice.wav",
+              "type": "string"
+            },
+            {
+              "id": "99541045-f388-4f98-9ba0-4f690faa1148",
+              "name": "cmd_voicetotxt_py",
+              "value": "=python {{ $env.WF_TGVOICETOTXT_PATH }}voicetotxt.py",
+              "type": "string"
+            },
+            {
+              "id": "cc2e9785-74b1-4697-b19e-849abeb1413c",
+              "name": "read_txt_file_path",
+              "value": "={{ $json.prefs.tmp_folder }}voice.txt",
+              "type": "string"
+            },
+            {
+              "id": "02f6c008-1d5b-4169-a539-1f2a7cefa20a",
+              "name": "write_voice_file_path",
+              "value": "={{ $json.prefs.tmp_folder }}voice.oga",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        -660
+      ],
+      "id": "60d1127f-dbe3-4d00-a1b6-bc7fbd78eca0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed8ccc9e-e605-4302-9056-24dd355b7855",
+              "leftValue": "={{ $json.prefs }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        180,
+        -240
+      ],
+      "id": "f9d4a740-ddb9-4df0-8869-4961733de0b2",
+      "name": "1st run"
+    },
+    {
+      "parameters": {
+        "content": "## Reading parameters when starting a workflow for the first time \nBefore starting the process, set the correct parameters in the **wf_tgvoicetotxt_prefs.json** configuration file or add these parameters to your configuration file, but correct the path in the **Read prefs from file** node so that the data is loaded from the correct file.",
+        "height": 580,
+        "width": 980,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        40,
+        -980
+      ],
+      "typeVersion": 1,
+      "id": "8701884b-96b5-426c-be6b-9c00b052fd96",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Node for demonstration\nThis node can be removed in the working project and the recognized text can be transferred to your model or to another place for further work with the user's message in text format.",
+        "height": 360,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3620,
+        -600
+      ],
+      "typeVersion": 1,
+      "id": "838db0ac-ce1e-472d-8c0e-9299d0ff1bfa",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Specify the URL where the workflow utilities are stored \n**WF_TGVOICETOTXT_PATH** - The global variable containing the path to the utilities folder for this workflow must end with a forward slash.",
+        "height": 300,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -140,
+        -800
+      ],
+      "typeVersion": 1,
+      "id": "58a57fba-e681-4f0a-a88f-78d2b40c654f",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "1st run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid IDs": {
+      "main": [
+        [
+          {
+            "node": "Msg not empty",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Msg 3p 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg not empty": {
+      "main": [
+        [
+          {
+            "node": "Get msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get msg": {
+      "main": [
+        [
+          {
+            "node": "Voice exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Msg Txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice exist": {
+      "main": [
+        [
+          {
+            "node": "Msg 3p 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Txt exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Txt exist": {
+      "main": [
+        [
+          {
+            "node": "Msg 3p 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg 3p 1": {
+      "main": [
+        [
+          {
+            "node": "Goto Adm",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg 3p 2": {
+      "main": [
+        [
+          {
+            "node": "One sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One sec": {
+      "main": [
+        [
+          {
+            "node": "Get URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg 3p 3": {
+      "main": [
+        [
+          {
+            "node": "Msg Bot Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get URL": {
+      "main": [
+        [
+          {
+            "node": "Load audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load audio file": {
+      "main": [
+        [
+          {
+            "node": "Write audio to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write audio to Disk": {
+      "main": [
+        [
+          {
+            "node": "ffmpeg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ffmpeg": {
+      "main": [
+        [
+          {
+            "node": "voicetotxt by vosk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "voicetotxt by vosk": {
+      "main": [
+        [
+          {
+            "node": "Read txt from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read txt from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get prefs path": {
+      "main": [
+        [
+          {
+            "node": "Read prefs from file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read prefs from file": {
+      "main": [
+        [
+          {
+            "node": "Extract prefs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract prefs": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Valid IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1st run": {
+      "main": [
+        [
+          {
+            "node": "Get prefs path",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 60,
+    "errorWorkflow": "wfcQxYK7vWjG2CB0",
+    "timezone": "Europe/Kyiv"
+  },
+  "versionId": "d79d10bb-5f1c-4878-a96e-c25da8be2549",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f9392a46a8b255f27d4a1c739d55b51e04b210cf2c98a0ca6d50ff0ae9eaf23"
+  },
+  "id": "On1aq0ZRxYVy3YqW",
+  "tags": []
+}

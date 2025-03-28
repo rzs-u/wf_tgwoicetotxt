@@ -1,0 +1,10 @@
+{
+	"telegram_valid_id": [111111111, 222222222],
+	"tg_bot_token": "<Bot-tokken>",
+	"model_path": "<Path to saved VOSK model>",
+	"ffmpeg_path": "ffmpeg",
+	"tmp_folder": "<Path to temp folder>",
+	"no_acc_msg": "<Msg aka: Access to the bot is denied. Contact the administrator./Доступ к боту запрещен. Обратитесь к администратору.>",
+	"bot_help_msg": "<On error/Help msg aka: The bot recognizes Russian speech into text. Send the bot an audio with your speech./Бот распознает русскую речь в текст. Отправьте боту аудио с вашей речью.>",
+	"waiting_msg": "<Waiting msg aka: Wait a second.../Секундочку...>"
+}  
